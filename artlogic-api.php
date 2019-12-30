@@ -1,17 +1,17 @@
 <?php
 /*
-Plugin Name: Art Logic Integration
-Description: Import and syncronize and artworks from ArtLogic to WordPress.
-Author: Erich Richter (based on original version written by Distill)
-Version: 2.0
+Plugin Name: ArtLogic Sync
+Description: Import and syncronize artworks from ArtLogic to WordPress.
+Author: Erich Richter (based on existing plugin concept from wedistill.com)
+Version: 1.0
 */
 
 // DEV ONLY
-// Note also, setting too loosely this may break JSON responses.
+// Note: setting this too loosely this can break JSON responses.
 ini_set('display_errors', 0);
-error_reporting(E_ERROR); 
+error_reporting(E_ERROR);
 
-/* Settings to allow program to run uninterrupted. These are more reliable on .htaccess */
+/* Settings to allow program to run uninterrupted. These are more reliable via .htaccess */
 ini_set('wait_timeout', 300);
 ini_set('max_execution_time', 300);
 ini_set('max_allowed_packet', 524288000);
