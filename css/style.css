@@ -1,0 +1,531 @@
+
+#artlogic {
+	position: relative;
+	margin: 0 16px 1em 0;
+}
+
+#artlogic .red, #artlogic .red a, #artlogic .red a:visited { color: #F97B75; }
+#artlogic .dark-red, #artlogic .dark-red a, #artlogic .dark-red a:visited { color: #BC0000; }
+#artlogic .green, #artlogic .green a, #artlogic .green a:visited { color: #0CCCC1; }
+#artlogic .dk-blue, #artlogic .dk-blue a, #artlogic .dk-blue a:visited { color: #00486A; }
+#artlogic .blue, #artlogic .blue a, #artlogic .blue a:visited { color: #0073aa; }
+
+#artlogic .grey, #artlogic .grey a, #artlogic .grey a:visited { color: #999; }
+#artlogic .alert, #artlogic alert a, #artlogic alert a:visited { color: #FF0000; }
+.off-white { color: #FEFEFE; }
+
+#artlogic *:focus, #artlogic *:active  {
+	outline: none;
+	-moz-outline: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+
+#artlogic ul {
+	list-style-type: disc;
+	margin: 0 0 .75em 2em;
+}
+
+#artlogic li {
+	list-style-type: disc;
+}
+
+#artlogic .error {
+	background-color: #FFCBCB;
+}
+#artlogic .asterisk-incomplete {
+	margin-left: 3px;
+}
+#artlogic .summary {
+	margin: 2em 0;
+}
+#artlogic hr {
+	border: none;
+	height: 2px;
+	background: #0073aa;
+	background: linear-gradient(90deg, rgba(128,128,128,1) 0%, rgba(255,255,255,0) 100%);
+	margin: 2em 0;
+}
+#artlogic .text-disabled {
+	opacity: .5;
+}
+
+#artlogic button {
+	border: 1px solid #B0B0B0;
+	padding-bottom: 3px;
+	border-radius: 3px;
+	min-width: 6em;
+	font-weight: 500;
+	cursor: pointer;
+	position: relative;
+}
+#artlogic button .btn-small {
+	margin: 16px 10px 0 0;
+	font-size: .875em;
+	float: right;
+}
+#artlogic.page-status button[name=button_refresh] {
+	margin: 16px 10px 0 0;
+	float: right;
+}
+#artlogic .anchor {
+	text-decoration: none;
+	display: block;
+	position: relative;
+}
+
+#artlogic .anchor:before {
+	height: 4em;
+	margin-top: -4em;
+	content: '';
+	display: block;
+}
+
+#artlogic .em {
+	font-style: italic;
+	font-weight: bold;
+}
+
+#artlogic .center {
+	text-align: center;
+}
+
+/* what? */
+.wp-admin select {
+	height: auto;	
+}
+
+form[name='artlogic'] {
+	text-align: center;
+}
+
+/* Hide everyone else's update notices when viewing our plugin admin.*/
+#artlogic .hide, .update-nag, .notice, .hide {
+	display: none;
+}
+
+/* Show our update notices, if any. */
+#artlogic.update-nag, #artlogic.notice {
+	display: block;
+}
+
+#artlogic .bold {
+	font-weight: bold;
+}
+
+#artlogic .monospace {
+	font-family: 'Courier New', monospaced;
+}
+
+#artlogic .hilite {
+	background-color: #FEFFBB;
+	border-radius: 2px;
+	border: 2px solid #FEFFBB;
+}
+
+.artlogic-logo {
+	overflow: hidden;
+	display: block;
+	position: relative;
+	margin: auto;
+	width: 132px;
+	height: 35px;
+}
+
+.artlogic-logo .svg {
+	width: 129px;
+	display: block;
+	position: absolute;
+}
+
+#artlogic .form-block {
+	margin: 2em 0;
+	opacity: 1;
+	transition: opacity .5s;
+}
+
+#artlogic .form-block .disabled {
+	opacity: .5;
+}
+#artlogic #progressbar {
+	margin: auto;
+	padding: 0;
+	width: 50%;
+	text-align: center;
+	height: 0;
+	opacity: 0;
+	transition: opacity .75s, height .75s;
+	position: relative;
+}
+#artlogic .ui-progressbar-value {
+	height: 100%;
+	top: 0;
+	position: absolute;
+}
+#artlogic .progress-label {
+	top: 0;
+	left: 50%;
+	text-align: center;
+	padding: .4em .5em;
+	transform: translate(-50%);
+	font-weight: bold;
+	text-shadow: 1px 1px 0 #fff;
+	min-height: 100%;
+	z-index: 1;
+	position: relative;
+}
+#artlogic #progressbar.showbar {
+	height: 100%;
+	opacity: 1;
+}
+
+#artlogic .response-box {
+	width: 90%;
+	max-width: 800px;
+	margin: 2em auto;
+	padding: .5em 2em 2em;
+	background-color: #FEFEFE;
+	text-align: left;
+	border-radius: 2px;
+}
+
+#artlogic .pre {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+#artlogic .form-container {
+	width: auto;
+	position: relative;
+	display: inline-block;
+	text-align: left;
+}
+
+/* JQuery drop-down menu */
+
+#artist-select select {
+	display: none;
+	padding: 0 2em;
+}
+.ui-selectmenu-button {
+	float: left;
+	display: block;
+	padding: 2px 1em;
+}
+#artist-select button {
+	float: left;
+	margin-left: 5px;
+}
+.ui-selectmenu-menu ul { min-height: 100px; }
+.ui-selectmenu-menu li { padding: 1px 1em; }
+.ui-selectmenu-menu li:nth-child(odd) { background-color: #FCFCFC; }
+.ui-selectmenu-menu li:nth-child(1) { display: none; }
+.ui-selectmenu-menu li span {
+	min-width: .75em;
+	display: inline-block;
+}
+.ui-selectmenu-menu li span.count { float: right; }
+.ui-selectmenu-menu li span.empty { color: #CCC; }
+#artlogic .checkbox-download {
+	clear: both;
+	float: right;
+	margin-top: 1em;
+}
+#artlogic .checkbox-download {
+	margin-top: 1em;
+	text-align: right;
+}
+
+/***** Help File *****/
+
+#artlogic.page-help {
+	padding: 0 20px;
+	width: 70%;
+	max-width: 640px;
+}
+
+#artlogic .ui-accordion {
+	font-family: inherit;
+}
+#artlogic .ui-accordion .ui-accordion-header,
+#artlogic .ui-accordion .ui-accordion-header:focus,
+#artlogic .ui-accordion .ui-accordion-header:active
+#artlogic .ui-accordion .ui-widget-content {
+	border: none;
+	background: #F1F1F1;
+	color: #444;
+	outline: none;
+	-moz-outline: none;
+}
+#artlogic .ui-accordion .ui-accordion-header {
+	font-size: 1em;
+	font-weight: 600;
+	font-family: inherit !important;
+}
+#artlogic .ui-accordion .ui-accordion-header:before {
+	border: none;
+	height: 2px;
+	width: 100%;
+	background: #0073aa;
+	bottom: 0px;
+	background: linear-gradient(90deg, rgba(128,128,128,1) 0%, rgba(255,255,255,0) 100%);
+	content: '';
+	position: absolute;
+}
+.ui-selectmenu-button .ui-icon {
+	float: right;
+	margin-top: 0;
+}
+#artlogic .ui-icon {
+	background-image: none;
+	width: 0; 
+	height: 0; 
+	margin-right: -6px;
+	margin-top: 4px;
+	border-top: 4px solid transparent;
+	border-bottom: 4px solid transparent;
+	border-left: 4px solid #444;
+	transition: transform .5s;
+	float: right;
+}
+#artlogic .ui-state-active .ui-icon {
+	transform: rotate(90deg);
+}
+#artlogic .ui-accordion .ui-widget-content  {
+	border: none;
+	background: #F1F1F1;
+	color: #444;
+	padding: 1em 0;
+}
+
+
+/***** IOS style toggle button *****/
+/* https://www.jqueryscript.net/form/ON-OFF-Toggle-Switches-Switcher.html */
+
+#artlogic .ui-switcher {
+  background-color: #F97B75;
+  display: inline-block;
+  height: 20px;
+  width: 48px;
+  border-radius: 10px;
+  box-sizing: border-box;
+  vertical-align: middle;
+  position: relative;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  margin: -2px 4px 0 0;
+  box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.15);
+}
+#artlogic .ui-switcher:before {
+  font-family: sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1;
+  display: inline-block;
+  position: absolute;
+  top: 6px;
+  height: 12px;
+  width: 20px;
+  text-align: center;
+}
+#artlogic .ui-switcher[aria-checked=false]:before {
+  content: 'OFF';
+  right: 7px;
+}
+#artlogic .ui-switcher[aria-checked=true]:before,
+#artlogic .ui-switcher.dummy-button:before {
+  content: 'ON';
+  left: 7px;
+  cursor: default;
+}
+#artlogic .ui-switcher[aria-checked=true],
+#artlogic .ui-switcher.dummy-button {
+  background-color: #0CCCC1;
+}
+#artlogic .ui-switcher:after,
+#artlogic .ui-switcher.dummy-button:after {
+  background-color: #ffffff;
+  content: '\0020';
+  display: inline-block;
+  position: absolute;
+  top: 2px;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  transition: left 0.25s;
+}
+#artlogic .ui-switcher[aria-checked=false]:after {
+  left: 2px;
+}
+#artlogic .ui-switcher[aria-checked=true]:after,
+#artlogic .ui-switcher.dummy-button:after {
+  left: 30px;
+}
+#artlogic .ui-switcher.dummy-button {
+	transform: scale(.75,.75);
+	display: inline-block;
+}
+#artlogic .toolbar .ui-switcher {
+	margin: 0 0 -3px 8px;
+}
+#artlogic .disabled .ui-switcher {
+	opacity: .5;
+}
+/* toolbar? */
+#artlogic .msg {
+	transition: opacity .5s;
+}
+#artlogic msg.fadeout {
+	opacity: 0;
+}
+
+#artlogic .toolbar {
+	font-size: 12px;
+	font-weight: 600;
+	text-transform: uppercase;
+	text-align: left;
+	min-height: 24px;
+	margin: .75em 0;
+	overflow: hidden;
+	position: relative;
+}
+#artlogic .toolbar label {
+	cursor: default;
+}
+#artlogic .toolbar .cron-schedule-toggle {
+	float: right;
+	height: 24px;
+	margin-right: 6px;
+	display: inline-block;
+}
+.cron-schedule-toggle .msg {
+	opacity: 1;
+	transition: opacity .7s;
+	overflow: hidden;
+}
+.cron-schedule-toggle .msg.hide {
+	opacity: 0;
+}
+#artlogic .result-grid {
+	min-width: 316px;
+	margin: 1em 0 .75em;
+	overflow: hidden;
+	position: relative;
+}
+#artlogic .grid-row {
+	padding: 3px 8px 0;
+	margin-bottom: 4px;
+	overflow: hidden;
+}
+#artlogic .result-grid header {
+	overflow: hidden;
+}
+#artlogic .result-grid section {
+	margin-top: -2px;
+	padding-top: 1em;
+	overflow: hidden;
+	border-top: 2px solid #CCC;
+}
+#artlogic .result-grid .col-left {
+	float: left;
+}
+#artlogic .result-grid .col-right {
+	font-size: .875em;
+	font-weight: 600;
+	float: right;
+	text-align: right;
+}
+#artlogic .result-grid .stat {
+	color: #444;
+}
+#artlogic .links {
+	position: relative;
+}
+#artlogic .links a,
+#artlogic .links a:visited {
+	color: #0073aa;
+	padding: 2px 4px;
+	display: inline-block;
+	border-bottom: 2px solid transparent;
+	text-decoration: none;
+	z-index: 1;
+	position: relative;
+}
+#artlogic .links.grey a {
+	color: #999;
+}
+#artlogic .links.grey a:hover {
+	border-color: #999;
+}
+#artlogic .links a:hover {
+	border-color: #0073aa;
+}
+#artlogic .odd-even .grid-row:nth-child(odd) {
+	background-color: #FCFCFC;
+}
+#artlogic .result-grid .blue {
+	background-color: #F5FCFF;
+}
+#artlogic .thumbnail {
+	margin: 0 .75em .75em 0;
+	width: 100px;
+	height: 100px;
+	overflow: hidden;
+	float: left;
+	position: relative;
+}
+#artlogic .thumbnail img {
+	height: auto;
+	max-width: 100%;
+	max-height: 100%;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	position: absolute;
+}
+#artlogic .thumbnail.deleted {
+	width: 40px;
+	height: 40px;
+}
+#artlogic .max-mb {
+	opacity: 0;
+	transition: opacity .75s;
+}
+#artlogic #reload-confirm {
+	color: #00486A;
+	background-color: #FEFEFE;
+	border: 1px solid #B0B0B0;
+	box-shadow: 0 5px 10px #888;
+	border-radius: 3px;
+	padding: 1em 2em 1.5em;
+	margin: 0 -16px 0 -20px;
+	width: 50%;
+	max-width: 500px;
+	min-width: 350px;
+	top: 6em;
+	left: 50%;
+	transform: translateX(-50%);
+	transition: opacity .75s;
+	z-index: 1000;
+	opacity: 0;
+	display: none;
+	position: absolute;
+}
+#artlogic #reload-confirm button {
+	margin: 1em 1em 0;
+}
+#artlogic #reload-confirm.show,
+#artlogic .max-mb.show {
+	opacity: 1;
+	display: block;
+}
+#artlogic .reload-cancel {
+	color: #BC0000;
+}
+#cron-cycler {
+	bottom: 10px;
+	right: 20px;
+	display: none;
+	position: absolute;
+}
