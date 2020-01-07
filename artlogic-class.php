@@ -1,13 +1,5 @@
 <?php
 /*
-TO DO:
-Organize functions ad isolte those that are required by interface.
-Document class output and public is.
-Write utility for help resolving duplicate images.
-Write function for full image refresh which breaks the job down into smaller parts.
-Rewrite sync so it doesn't process pages one at a time.
-Add better support for testing JSON output, use the config debug_mode flag.
-
 DEPENDENCIES:
 
 Anything in the WP database prefixed with "artlogic_" is part of this plugin and not directly used on the site elsewhere.
@@ -128,11 +120,15 @@ Class ArtLogicApi {
 	// Output: last_update, no_of_pages, cron_schedule_name, json_url
 	function admin_page(){
 
+		// Always do a data refresh the first time the user lands on the admin page.
+		if(!isset($_REQUEST['page_loaded'])) $this->data_is_current = false;
+
 		// Retrieve the artists' names for the drop-down menu.
       $artist_posts = $this->get_all_artist_posts();
 		$this->artist_stats = $this->get_artist_stats($artist_posts);
 
-		// $reload is a flag used on the admin form to recycle the user choices for the next run.
+		// $reload is a flag that tells us to recycle the user choices for the next page load,
+		// used for continuing partial update tasks until complete.
 		$this->reload = isset($_REQUEST['reload']) && $_REQUEST['reload']=='true' ? true : false;
 
 		// If the admin form was called with an artist's ID or a download is in progress
@@ -200,7 +196,7 @@ Class ArtLogicApi {
 
 				// Set cursor to -1 so AJAX scripts know when the job complete.
 				update_option($this->wp_db_prefix.'page_cursor', -1);
-				$this->set_timestamp();
+				$last_update = date("m/d/Y h:i A", $this->set_timestamp() );
 				$artist_stats = $this->sort_sync_data_by_artist($rows, $artist_posts );
 				$this->delete_old_cron_logs();
 			}
@@ -227,6 +223,7 @@ Class ArtLogicApi {
 		// Return JSON response
 		$data = [
 			'artist_stats' => $artist_stats,
+			'last_update' => $last_update,
 			'str_response' => $str_resp
 			];
 
@@ -465,7 +462,6 @@ Class ArtLogicApi {
 
 	// Compare incoming hash to existing item. 
 	function is_record_changed( $hash, $new_hash, $artlogic_id, $new_artlogic_id, $in_display_order ) {
-
 		// If no hash or artlogic_id doesn't match what we have this is a new record.
 		if( !$hash || $artlogic_id != $new_artlogic_id ){
 			$status = 'new';
@@ -474,7 +470,6 @@ Class ArtLogicApi {
 			if ( $new_hash != $hash || !$in_display_order ) $status = 'updated';
 			else $status = '';
 		}
-
 		return $status;
 	}
 
@@ -518,7 +513,9 @@ Class ArtLogicApi {
 	}
 
 	function set_timestamp() {
-		update_option($this->wp_db_prefix.'last_update', $this->get_timestamp() );
+		$timestamp = $this->get_timestamp();
+		update_option($this->wp_db_prefix.'last_update', $timestamp );
+		return strtotime($timestamp);
 	}
 
 	function php_date_from_sec($sec){
@@ -659,6 +656,9 @@ Class ArtLogicApi {
 		if($this->config['debug_mode']) {
 			$next_page_link = $this->home_url.$this->plugin_path.'/data/'. $page_name .'.json';
 		}
+		// Prevent WP from caching this data. 
+		//$next_page_link .= '?'.time();
+
 		$req = wp_remote_get($next_page_link, array('timeout' => 5));
 		if( is_wp_error($req) ) return false;
 		$body = wp_remote_retrieve_body($req);
@@ -715,7 +715,7 @@ Class ArtLogicApi {
 		// Format the filename for query strings.
 		$file_array = array();
 		preg_match('/[^\?]+\.(jpg|jpe|jpeg|gif|png)/i', $url, $matches);
-		$file_array['name'] = basename($matches[0]);
+		$file_array['name'] = $matches ? basename($matches[0]) : '';
 		$file_array['tmp_name'] = $tmp;
 	
 		// If there was an error storing temporarily, unlink
@@ -870,7 +870,7 @@ Class ArtLogicApi {
 			$str_entry = mb_convert_encoding($str_entry, 'UTF-8', 'OLD-ENCODING'); // This makes the characters friendly to a browser.
 			$str_entry = date('m.d-H:i:s', time()).CHR(9).$str_entry;
 			$filename = $this->plugin_abs_path.'logs/'.date('Y.m', time()).'-sync.txt';
-			if(!$file_exists($filename)) {
+			if(!file_exists($filename)) {
 				$str_header = '// This is an auto-generated file.';
 				file_put_contents($filename, $str_header.CHR(10), FILE_APPEND);
 			}
@@ -924,7 +924,7 @@ Class ArtLogicApi {
 		$stats = $this->artist_stats;
 		$download_cursor = get_option($this->wp_db_prefix.'download_cursor');
 		$start_time = time();
-		//if($cron) $this->cron_log('Start');
+		// if($cron) $this->cron_log('Start:'.$start_time.':'.$cron);
 		
 		foreach ($artist_posts as $post) {
 
@@ -1005,7 +1005,9 @@ Class ArtLogicApi {
 						$info = 'item:'.$artlogic_id.' orig_attach_id: '.$artworks[$artlogic_id]['id'].' status:'.$import_status.' '.$image_status;
 						//if($cron) $this->cron_log($info);
 
-						if( $image_has_updates ) {
+						// Ideally itms with only item_has_updates should just update the attachment details and
+						// skip downloading and reattaching the image.
+						if( $item_has_updates || $image_has_updates ) {
 
 							// Delete any existing attachment.
 							if( $orig_attach_id ) {
@@ -1014,13 +1016,18 @@ Class ArtLogicApi {
 								//if($cron) $this->cron_log($info);
 							}
 
-							// Download and save the new image as a post attachment.
-							$attach = $this->attach_image (	$artist_id,
-																		$row['img_url'],
-																		$descr['title'],
-																		$descr['description']
-																		);
-							$attach_id = $attach['id'];
+							if($row['img_url']) {
+								// Download and save the new image as a post attachment.
+								$attach = $this->attach_image (	$artist_id,
+																			$row['img_url'],
+																			$descr['title'],
+																			$descr['description']
+																			);
+								$attach_id = $attach['id'];
+							}
+							else {
+								$attach_id = 0;
+							}
 
 							if($attach_id) {
 
@@ -1144,7 +1151,7 @@ Class ArtLogicApi {
 					array_push($resp,$thumbnails);
 				}
 				else {
-					$str_msg = $this->download_cursor == 0 ? 'Update complete.' : '';
+					$str_msg = $this->download_cursor == 0 ? '<div>Update Complete</div>' : '';
 					array_push($resp,$str_msg);
 					$this->reload = false;
 					$this->force_download = false;
