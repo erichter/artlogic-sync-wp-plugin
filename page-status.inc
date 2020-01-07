@@ -76,7 +76,7 @@
 		<h1>Sync Status</h1>
 		<h5>
 			<?php if(strlen($last_update)): ?>
-				<div>ArtLogic data was last refreshed on: <?=$last_update;?></div>
+				<div id="last-update">ArtLogic data was last refreshed on: <span class="date"><?=$last_update;?></span></div>
 			<?php endif; ?>
 			Click on names to process updates. Items shown in grey are current.
 		</h5>
