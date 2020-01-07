@@ -22,6 +22,7 @@ jQuery(document).ready(function($){
 		// Admin and Sync page
 		artistStats = null,
 		artistStatsArr = [],
+		lastUpdate = '',
 		pluginUrl = '',
 		progBar = null,
 		progLabel = null,
@@ -45,11 +46,13 @@ jQuery(document).ready(function($){
 				// Start polling WP to find out where we are in this download.
 				progTimer = setTimeout( function(){ checkDownloadProgress(); }, 1000);
 				progBar.addClass('showbar');
-
+console.log('refreshData')
 				// Submit the sync request
 				$.getJSON( pluginUrl, { 'json': true, 'manual_refresh': (refresh?true:false) } )
 					.done(function(data) {
+console.log('refreshData DONE')
 						if(data.artist_stats) {
+							lastUpdate = data.last_update;
 							artistStatsArr = data.artist_stats;
 							dataIsCurrent.val('true');
 							if(currPage==-1 && progBarRunning) {
@@ -118,7 +121,7 @@ jQuery(document).ready(function($){
 		reloadShowProgressBar = function(){
 			progBar.progressbar({ value: false });
 			progBar.addClass('showbar');
-			progLabel.html('Downloading Images');
+			progLabel.html('Updating Images');
 		},
 
 		stopProgressBar = function(){
@@ -149,13 +152,16 @@ jQuery(document).ready(function($){
 			else {
 				setTimeout(function(){ progLabel.html( 'Import Complete' )} ,1);
 				setTimeout(resetProgressBar,1000);
-				//setTimeout(function(){ resetProgressBar(); location.reload(); },1000);
 				repopulateStats();
 			}
 		},
 
 		// status page
 		repopulateStats = function(){
+
+			// lastUpdate is returned by refreshData when successful.
+			$('#last-update .date').text(lastUpdate);
+
 			let lines, stat, separator, line, selector, id, artist, has_updates, ctNew, ctUpdated, ctDeleted;
 			lines =	$('.grid-row');
 			lines.each(function(i,o){
@@ -218,8 +224,8 @@ jQuery(document).ready(function($){
 				if(refresh) imageCt = stats.all;
 				else imageCt = stats.new + stats.updated - stats.incomplete;
 			}
-			sPlural = (imageCt==0 || imageCt>1 || imageCt=='')? 's' : '';
-			label = 'Downloading '+imageCt+' Image'+sPlural;
+			if(imageCt==0 || imageCt=='') label = 'Updating Images';
+			else label = 'Updating '+imageCt+' Images';
 
 			downloadTimer = setTimeout( function(){
 				progBar.progressbar({ value: false });
@@ -406,7 +412,10 @@ jQuery(document).ready(function($){
 				e.preventDefault();
 				if(!getArtistId()) return false;
 				$(this).prop('disabled', 'disabled');
-				refreshData();
+
+				// Auto refresh (plugin won't run this if cron is turned off).
+				let refresh = (dataIsCurrent.val() == 'false') ? true : false;
+				refreshData(refresh);
 				return false;
 			}).focus();
 
@@ -421,20 +430,21 @@ jQuery(document).ready(function($){
 
 		},
 
-		initStatusPage = function(){
+		initStatusPage = function() {
+
+			// Auto refresh (plugin won't run this if cron is turned off).
+			if(dataIsCurrent.val() == 'false') refreshData();
+
+			// Manual refresh.
 			btnRefresh = artlogic.find('[name=button_refresh]');
 			btnRefresh.click(function(e){
 				e.preventDefault;
 				$(this).prop('disabled',true);
-				dataIsCurrent.val(false);
+				dataIsCurrent.val('false');
 				refreshData(true);
 				return false;
 			});
 
-			// Auto refresh as long as cron isn't turned off.
-			cronScheduleActive = artlogicForm.find('input[name=cron_schedule_active]');
-			if(dataIsCurrent.val() == 'false') refreshData(); // && cronScheduleActive.val()=='true'
-			cronCycler();
 		},
 
 		init = function(){
@@ -450,6 +460,8 @@ jQuery(document).ready(function($){
 			});
 			progLabel = progBar.find('.progress-label');
 			progLabelDefault = progLabel.html();
+
+			cronCycler();
 
 			if ($('.page-admin').length) initAdminPage();
 			if ($('.page-status').length) initStatusPage();
