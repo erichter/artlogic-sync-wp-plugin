@@ -3,10 +3,10 @@
 	$last_update = $artlogic->get_last_update();
 ?>
 <div id="artlogic" class="center page-admin">
-
 	<form method="post" name="artlogic">
 		<input type="hidden" name="json_url" value="<?=$artlogic->json_url; ?>">
 		<input type="hidden" name="data_is_current" value="<?= ($artlogic->data_is_current ? 'true' : 'false'); ?>">
+		<input type="hidden" name="page_loaded" value="true">
 		<input type="hidden" name="download_cursor" value="<?=$artlogic->download_cursor; ?>">
 		<div style="display:none;" id="artist_stats"><?=json_encode($artlogic->artist_stats);?></div>
 
@@ -30,7 +30,9 @@
 
 		<div class="stats">
 			<h4>
-				<div>ArtLogic data was last refreshed on: <?=$last_update;?></div>
+				<?php if(strlen($last_update)): ?>
+					<div id="last-update">ArtLogic data was last refreshed on: <span class="date"><?=$last_update;?></span></div>
+				<?php endif; ?>
 				<?php if(strlen($artlogic->cron_schedule_name) && $artlogic->cron_schedule_active): ?>
 					<div>Sync is scheduled to run <em><?= $artlogic->cron_schedule_name;?></em>.</div>
 				<?php endif; ?>
