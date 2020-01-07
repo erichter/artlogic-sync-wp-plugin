@@ -5,7 +5,7 @@
 	<p class="summary">
 		<strong>ArtLogic Sync</strong> is a custom plugin that synchronises images from an ArtLogic Database
 		account to WordPress. It downloads and imports image files and data. Image formatting and display are
-		not managed by the plugin. The WordPress theme and gallery plugins do the presentation work. The sync
+		not managed by the plugin. The WordPress theme and gallery plugins does the presentation work. The sync
 		function can be scheduled to run automatically at specified intervals and it can also be run on demand
 		when immediate updates are needed.
 	</p>
@@ -24,7 +24,7 @@
 	<a name="sync_artist" class="anchor"></a>
 	<h2>Updating an Artist</h2>
 	<p>
-		The Artlogic Sync plugin can do regular scheduled updates (i.e. nightly), but you can update a
+		The Artlogic Sync plugin runs updates on a schedule (i.e. every 10 minutes), but you can also update a
 		specific artist at any time on the main <em>ArtLogic Sync</em> page. When you click update the plugin
 		refreshes ArtLogic data and downloads new or updated images for the selected artist. Changes appear
 		immediately on the website.
@@ -42,8 +42,8 @@
 				<strong>ArtLogic Sync</strong></a>, choose the artist's name from the drop-down and click <em>Update</em>.</li>
 	</ol>
 	<p>
-		<span>Important:</span> The first time an artist is synced the spelling of the artist's name (title) on their 
-		<em>WordPress</em> post must match the spelling of their record at ArtLogic. However once the first update
+		<span>Important:</span> The first time an artist is synced the spelling of the artist's name (title field) on their 
+		<em>WordPress</em> post must match the spelling of their record at ArtLogic. Once the first update
 		has been done the two accounts are linked by a hidden ID number that never changes and you can update
 		the name spelling on either account any time.
 	</p>
@@ -180,26 +180,104 @@
 			<ul>
 				<li>
 					<strong>Time Zone:</strong><br>
-					Example: America/Los_Angeles
+					See: www.php.net/manual/en/timezones.php for details on this PHP setting.<br>
+					Example: America/Los_Angeles<br>
+					Current setting: <?=$artlogic->config['timezone_str'];?>
+				</li>
+				<li>
+					<strong>Artlogic Home Url:</strong><br>
+					URL to ArtLogic.net, used to determine network connectivity.<br>
+					Example: www.artlogic.net<br>
+					Current setting: <?=$artlogic->config['artlogic_home_url'];?>
 				</li>
 				<li>
 					<strong>Feed Url:</strong><br>
-					This is specific to each <a href="http://ArtLogic.net" target="_blank">ArtLogic.net</a> account.
+					This RSS feed is specific to each <a href="http://ArtLogic.net" target="_blank">ArtLogic.net</a> account.
 					It tells the plugin where to download ArtLogic data.<br>
-					Example: http://feeds.artlogic.net/hosfeltgallery/websites/2.0/artworks/json
+					Example: http://feeds.artlogic.net/hosfeltgallery/websites/2.0/artworks/json<br>
+					Current setting: <?=$artlogic->config['feed_url'];?>
+				</li>
+				<li>
+					<strong>ArtLogic Artist's Page Base URL:</strong><br>
+					Appending a valid ArtLogic artist_id to this URL loads their image collection in ArtLogic.<br>
+					Example: https://app.artlogic.net/hosfeltgallery/records/artworks/artist/<br>
+					Current setting: <?=$artlogic->config['artlogic_artist_page_base_url'];?>
+				</li>
+				<li>
+					<strong>Cron Event Hook:</strong><br>
+					This tells the plugin the name of the WordPress cron event used to schedule syncing.<br>
+					Is must match the <em>Hook Name</em> used on the WordPress WP-Cron Events page.<br>
+					Example: artlogic_sync<br>
+					Current setting: <?=$artlogic->config['cron_hook'];?>
+				</li>
+				<li>
+					<strong>Max MB Download Per Request:</strong><br>
+					This sets a limit on how much data can be downloaded in one request.
+					This should be no more than 20MB to prevent server slowness or timeouts.<br>
+					Example: 10<br>
+					Current setting: <?=$artlogic->config['max_mb_per_request'];?>
+				</li>
+				<li>
+					<strong>Max Cron Runtime in Seconds:</strong><br>
+					Another throttle similar to the one above, sets a time limit on the request.
+					This should be no more than 120 seconds to prevent server timeouts.<br>
+					Example: 90<br>
+					Current setting: <?=$artlogic->config['max_cron_runtime_seconds'];?>
+				</li>
+				<li>
+					<strong>Cache Expiration Minutes for Manual Updates:</strong><br>
+					The time in minutes before reimporting fresh Artlogic data when doing  manual updates.
+					This is simply a convenience feature to prevent the sync admin page from redundantly downloading
+					new data every time the admin page loads.<br>
+					Example: 60<br>
+					Current setting: <?=$artlogic->config['cache_expiration_minutes_manual'];?>
+				</li>
+				<li>
+					<strong>Cache Expiration Minutes for Manual Updates:</strong><br>
+					The time in minutes before reimporting fresh Artlogic data.
+					This is simply a convenience feature to prevent the sync admin page from redundantly downloading
+					new data every time the Artlogic Sync loads.<br>
+					Example: 60<br>
+					Current setting: <?=$artlogic->config['cache_expiration_minutes_manual'];?>
+				</li>
+				<li>
+					<strong>Cache Expiration Minutes for Cron:</strong><br>
+					Same as above but for cron jobs, which benefit from a longer interval between refresh.<br>
+					Example: 120<br>
+					Current setting: <?=$artlogic->config['cache_expiration_minutes_cron'];?>
+				</li>
+				<li>
+					<strong>Cron Log Lifespan in Days:</strong><br>
+					The number of days to keep plugin cron logs on the server.
+					The plugin logs each cron run for the purposes of error checking.
+					A new log is created each month. Logs older than this timespan are automatically
+					deleted to prevent them from accumulating on the server.<br>
+					Example: 180<br>
+					Current setting: <?=$artlogic->config['cron_log_lifespan_days'];?>
 				</li>
 				<li>
 					<strong>Sort Field:</strong><br>
 					This tells the plugin the name of the <em>Advanced Custom Field</em> being used by the WordPress theme to
 					store the image sort order. Is must be a valid WordPress ACF field slug. Without this field name ArtLogic Sync
 					cannot maintain the sort order created in the WordPress Artists' pages.<br>
-					Example: artist_works<?=$artlogic->config['acf_artist_sort_field'];?>
+					Example: artist_works<br>
+					Current setting: <?=$artlogic->config['acf_artist_sort_field'];?>
 				</li>
 				<li>
-					<strong>Cron Event Hook:</strong><br>
-					This tells the plugin the name of the WordPress cron event used to schedule syncing.<br>
-					Is must match the <em>Hook Name</em> used on the WordPress WP-Cron Events page.
-					Example: cron_hook
+					<strong>Fields to Import:</strong><br>
+					A comma separated list of ArtLogic fields.<br>
+					Rather than save all ArtLogic data to the WordPress database, we can limit import to only the fields we need
+					for theming. The plugin automatically includes fields required for its internal automation but any
+					other fields needed, for example by a new theme function, can be added here.<br>
+					Example: preview_image, _title, artist, artist_id, artist_sort_title_year, artist_title_year&hellip;<br>
+					Current setting: <?=$artlogic->config['fields_to_import'];?>
+				</li>
+				<li>
+					<strong>Debug Mode:</strong><br>
+					This setting is for DEV use only. It allows the plugin to run in dev mode and use
+					local temp data instead of live ArtLogic data.<br>
+					Example: false<br>
+					Current setting: <?=($artlogic->config['debug_mode']?'true':'false');?>
 				</li>
 			</ul>
 			<p>
