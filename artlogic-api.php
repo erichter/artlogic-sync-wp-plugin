@@ -8,7 +8,7 @@ Version: 1.0
 
 // DEV ONLY
 // Note: setting this too loosely this can break JSON responses.
-ini_set('display_errors', 0);
+ini_set('display_errors', 1);
 error_reporting(E_ERROR);
 
 /* Settings to allow program to run uninterrupted. These are more reliable via .htaccess */
@@ -74,6 +74,9 @@ else {
 		$icon_url = $artlogic->plugin_path.'/images/artlogic_menu_logo.svg';
 		add_menu_page( 'ArtLogic Sync', 'ArtLogic Sync', 'edit_posts', 'artlogic-plugin', 'admin_page', $icon_url, 1);
 		add_submenu_page('artlogic-plugin', 'Sync Status', 'Sync Status', 'edit_posts', 'artlogic-status-page', 'status_page' );
+		if($artlogic->config['debug_page']){
+			add_submenu_page('artlogic-plugin', 'Debug', 'Debug', 'edit_posts', 'artlogic-debug-page', 'debug_page' );
+		}
 		add_submenu_page('artlogic-plugin', 'Help', 'Help', 'edit_posts', 'artlogic-help-page', 'help_page' );
 	}
 	add_action('admin_menu', 'add_artlogic_plugin_to_wp_admin');
@@ -90,7 +93,8 @@ else {
 		$cron = true;
 		$data = $artlogic->sync($cron);
 	}
-	add_action( 'artlogic_sync', 'artlogic_cron_schedule' );
+	// add_action( 'artlogic_sync', 'artlogic_cron_schedule' );
+	add_action( $artlogic->config['cron_hook'], 'artlogic_cron_schedule' );
 
 
 	// DISPLAY PAGES
@@ -103,6 +107,12 @@ else {
 	function status_page() {
 		global $artlogic;
 		include 'page-status.inc';
+	}
+
+	// Dev use only, runs the cron sequence in verbose mode.
+	function debug_page() {
+		global $artlogic;
+		include 'page-debug.inc';
 	}
 
 	function help_page(){
